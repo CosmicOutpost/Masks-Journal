@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masks of Nyarlathotep — The Peru Journal</title>
+
+<!-- OpenDyslexic for body reading, Special Elite for pulp flavour headings -->
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ── OpenDyslexic via CDN ── */
+  @font-face {
+    font-family: 'OpenDyslexic';
+    src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/fonts/OpenDyslexic-Regular.otf') format('opentype');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'OpenDyslexic';
+    src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/fonts/OpenDyslexic-Bold.otf') format('opentype');
+    font-weight: 700;
+  }
+
+  /* ── CSS Variables ── */
+  :root {
+    --ink:        #E8DCC8;
+    --ink-dim:    #A89880;
+    --ink-faint:  #6B5A48;
+    --bg:         #0D0B09;
+    --bg-card:    #131109;
+    --bg-card2:   #1A1710;
+    --red:        #C0392B;
+    --red-dim:    #8B2015;
+    --gold:       #B8860B;
+    --gold-bright:#D4A017;
+    --rule:       #3A2E22;
+    --shadow:     rgba(0,0,0,0.8);
+  }
+
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: 'OpenDyslexic', 'Courier Prime', monospace;
+    font-size: 18px;
+    line-height: 1.9;
+    letter-spacing: 0.02em;
+    min-height: 100vh;
+    /* Subtle grain texture */
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* ── Scanline overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── Header ── */
+  header {
+    position: relative;
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(184,134,11,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-eyebrow {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .header-title {
+    font-family: 'Special Elite', serif;
+    font-size: clamp(32px, 6vw, 64px);
+    color: var(--ink);
+    line-height: 1.1;
+    text-shadow: 0 0 40px rgba(184,134,11,0.2), 2px 2px 0 rgba(0,0,0,0.8);
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .header-title span {
+    color: var(--red);
+  }
+
+  .header-sub {
+    font-family: 'Special Elite', serif;
+    font-size: clamp(14px, 2vw, 18px);
+    color: var(--ink-dim);
+    margin-top: 12px;
+    font-style: italic;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .header-rule {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.8s;
+  }
+
+  .header-rule::before,
+  .header-rule::after {
+    content: '';
+    flex: 1;
+    max-width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .header-rule::after {
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .header-rule-diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── Nav ── */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg-card);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  nav a {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    padding: 16px 24px;
+    border-right: 1px solid var(--rule);
+    transition: color 0.2s, background 0.2s;
+    position: relative;
+  }
+
+  nav a:first-child { border-left: 1px solid var(--rule); }
+
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+
+  nav a:hover {
+    color: var(--ink);
+    background: rgba(184,134,11,0.05);
+  }
+
+  nav a:hover::after { transform: scaleX(1); }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+  }
+
+  /* ── Section titles ── */
+  .section-label {
+    font-family: 'Special Elite', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--rule), transparent);
+  }
+
+  /* ── Intro block ── */
+  .intro-block {
+    border-left: 3px solid var(--red);
+    padding: 24px 32px;
+    background: var(--bg-card);
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .intro-block::before {
+    content: '\2767';
+    font-size: 40px;
+    color: var(--red-dim);
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    opacity: 0.3;
+  }
+
+  .intro-block p {
+    font-size: 17px;
+    line-height: 2;
+    color: var(--ink-dim);
+  }
+
+  .intro-block strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ── Recap cards ── */
+  .recap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .recap-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s;
+    cursor: pointer;
+  }
+
+  .recap-card:hover {
+    border-color: var(--gold);
+    transform: translateX(4px);
+  }
+
+  /* Red corner accent */
+  .recap-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--red), var(--red-dim));
+  }
+
+  .recap-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 28px 28px 0;
+    border-color: transparent var(--bg) transparent transparent;
+  }
+
+  .recap-header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .recap-number {
+    font-family: 'Special Elite', serif;
+    font-size: 48px;
+    color: var(--red-dim);
+    line-height: 1;
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+
+  .recap-meta {
+    flex: 1;
+  }
+
+  .recap-episode {
+    font-family: 'Special Elite', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .recap-title {
+    font-family: 'Special Elite', serif;
+    font-size: clamp(20px, 3vw, 28px);
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .recap-date {
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-family: 'Special Elite', serif;
+    letter-spacing: 0.1em;
+  }
+
+  /* Collapsible body */
+  .recap-body {
+    padding: 0 36px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, padding 0.3s ease;
+  }
+
+  .recap-card.open .recap-body {
+    max-height: 9999px;
+    padding: 28px 36px 32px;
+  }
+
+  .recap-body p {
+    font-size: 17px;
+    line-height: 2.1;
+    color: var(--ink-dim);
+    margin-bottom: 20px;
+  }
+
+  .recap-body p:last-child { margin-bottom: 0; }
+
+  .recap-body strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .recap-body em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* Pull quote inside recap */
+  .pull-quote {
+    border-left: 2px solid var(--gold);
+    padding: 12px 20px;
+    margin: 24px 0;
+    background: rgba(184,134,11,0.04);
+  }
+
+  .pull-quote p {
+    font-size: 16px !important;
+    color: var(--gold) !important;
+    font-style: italic;
+    margin: 0 !important;
+  }
+
+  /* Toggle button */
+  .recap-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 36px;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--rule);
+    width: 100%;
+    cursor: pointer;
+    color: var(--ink-dim);
+    font-family: 'Special Elite', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .recap-toggle:hover {
+    color: var(--ink);
+    background: rgba(184,134,11,0.04);
+  }
+
+  .toggle-icon {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+    color: var(--gold);
+  }
+
+  .recap-card.open .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  /* ── Characters bar ── */
+  .characters-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+
+  .char-chip {
+    background: var(--bg-card2);
+    border: 1px solid var(--rule);
+    padding: 14px 16px;
+    transition: border-color 0.2s;
+  }
+
+  .char-chip:hover { border-color: var(--gold); }
+
+  .char-name {
+    font-family: 'Special Elite', serif;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .char-role {
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.4;
+  }
+
+  .char-status {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid;
+  }
+
+  .status-active { color: #4CAF50; border-color: #4CAF50; }
+  .status-wounded { color: var(--red); border-color: var(--red); }
+  .status-unknown { color: var(--gold); border-color: var(--gold); }
+
+  /* ── Clues sidebar ── */
+  .clues-block {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--red);
+    padding: 28px 32px;
+    margin-bottom: 60px;
+  }
+
+  .clues-title {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 20px;
+  }
+
+  .clue-item {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: flex-start;
+  }
+
+  .clue-item:last-child { border-bottom: none; }
+
+  .clue-bullet {
+    color: var(--gold);
+    font-size: 18px;
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  .clue-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--ink-dim);
+  }
+
+  .clue-text strong { color: var(--ink); }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .footer-text {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+  }
+
+  .footer-text span { color: var(--gold); }
+
+  /* ── Dyslexia toggle ── */
+  .a11y-bar {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .a11y-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    color: var(--ink-dim);
+    font-family: 'Special Elite', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .a11y-btn:hover, .a11y-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(184,134,11,0.08);
+  }
+
+  /* ── Reading mode ── */
+  body.reading-mode {
+    font-size: 20px;
+    line-height: 2.2;
+    letter-spacing: 0.04em;
+  }
+
+  body.reading-mode .recap-body p {
+    font-size: 20px;
+    line-height: 2.3;
+  }
+
+  body.high-contrast {
+    --ink: #FFFFFF;
+    --ink-dim: #DDDDDD;
+    --bg: #000000;
+    --bg-card: #0A0A0A;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    nav a { padding: 14px 14px; font-size: 10px; letter-spacing: 0.1em; }
+    .recap-header { flex-direction: column; gap: 8px; }
+    .recap-number { font-size: 32px; }
+    .recap-body, .recap-card.open .recap-body { padding-left: 20px; padding-right: 20px; }
+    .recap-toggle { padding-left: 20px; padding-right: 20px; }
+    .a11y-bar { bottom: 12px; right: 12px; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-eyebrow">Campaign Journal — Peru Chapter — 1921</div>
+    <h1 class="header-title">MASKS OF <span>NYARLATHOTEP</span></h1>
+    <p class="header-sub">What was found cannot be unfound. What was woken cannot be put back to sleep.</p>
+    <div class="header-rule"><div class="header-rule-diamond"></div></div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#recaps">Session Recaps</a>
+    <a href="#characters">The Company</a>
+    <a href="#clues">What We Know</a>
+  </nav>
+
+  <!-- Main content -->
+  <main>
+
+    <!-- INTRO -->
+    <div class="intro-block fade-in" style="animation-delay:0.1s">
+      <p>
+        Lima, March 1921. The <strong>Larkin Expedition</strong> has assembled — a doctor from Copenhagen,
+        a soldier from the Bronx, an anarchist from Chicago, a photographer from Lima herself.
+        Their brief: locate a lost pyramid in the Peruvian highlands. Their situation: rather more complicated than advertised.
+        Something is moving beneath <strong>Lake Titicaca</strong>. Something has been in Luciana's dreams for three months.
+        And someone with a Tommy gun very much does not want them to find out what it is.
+      </p>
+    </div>
+
+    <!-- CHARACTERS -->
+    <section id="characters">
+      <div class="section-label">The Company</div>
+      <div class="characters-row fade-in" style="animation-delay:0.2s">
+
+        <div class="char-chip">
+          <div class="char-name">Dr. Rune Dreyer</div>
+          <div class="char-role">Danish physician. Packed enough morphine to start a war.</div>
+          <span class="char-status status-active">Active</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Ilya</div>
+          <div class="char-role">Bronx muscle. Knows what a misfire sounds like. This wasn't one.</div>
+          <span class="char-status status-active">Active</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Arthur James</div>
+          <div class="char-role">Anarchist. Chicago was getting warm. Dynamite is his first language.</div>
+          <span class="char-status status-active">Active</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Francois Bellatier</div>
+          <div class="char-role">Photographer. Speaks fluent Spanish. Wears her scarf high.</div>
+          <span class="char-status status-active">Active</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Jackson Elias</div>
+          <div class="char-role">Author. Travelling as Jesse Hughes. Shot outside Lima hospital.</div>
+          <span class="char-status status-wounded">Wounded</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Luciana Quispe Mamani</div>
+          <div class="char-role">Antiquities finder. Brought the disc. Paid for it.</div>
+          <span class="char-status status-wounded">Wounded</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Augustus Larkin</div>
+          <div class="char-role">Expedition backer. Thinner than his suits. Running out of time.</div>
+          <span class="char-status status-unknown">Watch Him</span>
+        </div>
+
+        <div class="char-chip">
+          <div class="char-name">Mendoza</div>
+          <div class="char-role">Larkin's associate. Peruvian. Stares at Jackson. Touched nothing.</div>
+          <span class="char-status status-unknown">Watch Him</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CLUES -->
+    <section id="clues">
+      <div class="section-label">What We Know</div>
+      <div class="clues-block fade-in" style="animation-delay:0.3s">
+        <div class="clues-title">⚑ Open Threads — Peru</div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text">The <strong>golden disc</strong> Luciana carried for three months gave her dreams of something beneath Lake Titicaca. Someone tried to kill everyone outside the hospital to get it back.</span>
+        </div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text"><strong>Nayra</strong> — a wise woman at Lake Titicaca. Luciana said find her before the pyramid. Before anything.</span>
+        </div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text">Jackson noted that Larkin's two artefacts — the pendant and the golden cup — are from <strong>different centuries</strong>. They could not have come from the same site. Someone sold Larkin a story.</span>
+        </div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text"><strong>Mendoza</strong> did not drink. Did not eat. Stared at Jackson Elias the entire evening with something beyond dislike.</span>
+        </div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text"><strong>Larkin</strong> is in opium withdrawal. A man spending his last good days on a final expedition. Why this pyramid, why now?</span>
+        </div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text">Arthur spotted a <strong>watcher in the shadows</strong> outside the hotel before the shooting. Gone before anyone could reach him.</span>
+        </div>
+
+        <div class="clue-item">
+          <span class="clue-bullet">◆</span>
+          <span class="clue-text">Monday, 21st March. <strong>8am. Hotel España.</strong> The trucks leave for Puno whether Jackson is on them or not.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SESSION RECAPS -->
+    <section id="recaps">
+      <div class="section-label">Session Recaps</div>
+      <div class="recap-list">
+
+        <!-- SESSION 1 -->
+        <article class="recap-card open fade-in" style="animation-delay:0.4s" onclick="toggleRecap(this)">
+          <div class="recap-header">
+            <div class="recap-number">01</div>
+            <div class="recap-meta">
+              <div class="recap-episode">Episode One — Lima</div>
+              <h2 class="recap-title">The Golden Disc</h2>
+              <div class="recap-date">18th March, 1921 &nbsp;|&nbsp; Hotel Mori &bull; Bar Cordano &bull; Lima Hospital</div>
+            </div>
+          </div>
+
+          <div class="recap-body">
+            <p>
+              Lima, March 1921. The city arrives before anyone is ready for it. They came from different corners of the world, drawn by a telegram and the promise of something worth finding. <strong>Dr. Rune Dreyer</strong>, who bade farewell to his devoted companion Ox at a Copenhagen train station and swatted away a journalist too ignorant to know the difference between Lima and Madagascar. <strong>Ilya</strong>, who left a Bronx flophouse and a neighbour named Mario waving him off from the stoop, carrying the particular luggage of a man who has driven trucks he was not supposed to ask about. <strong>Arthur James</strong>, slipping away from a smoky Chicago anarchist's club with little more than his hat, his corncob pipe, and a carefully unspecified reason for needing to leave town quickly. And <strong>Francois Bellatier</strong>, photographer, Lima local, wearing a silk scarf high around her neck at a temperature that did not require it.
+            </p>
+
+            <p>
+              The city met them with heat, mule carts, and Petronila — the landlady of the Hotel Mori — who handed out room keys with the practised efficiency of a woman who has long since stopped expecting guests to be straightforward. They had time to spare before their evening appointment. The doctor acquired medical supplies through a combination of broken Latin and enthusiastic mime. The others found an elderly man and his llama in a sun-warmed plaza, and left wearing the finest alpaca wool Lima had to offer, Francois insisting on overpaying on principle.
+            </p>
+
+            <p>
+              That evening they found the <strong>Bar Cordano</strong> exactly where they had been told to find it, candles on the tables and the sun going down warm over the city. <strong>Augustus Larkin</strong> was already there — mid-forties, but wearing it badly, a suit that had recently become roomier than intended. Beside him, a Peruvian man called <strong>Mendoza</strong> who looked at the table, at the wall, at anything except the African-American gentleman sitting opposite him, who introduced himself as <strong>Jesse Hughes</strong> and watched everything with the steady attention of someone taking notes.
+            </p>
+
+            <p>
+              Larkin was enthusiastic in the way of men who have staked everything on a single outcome. A pyramid. Southern Peru, near Lake Titicaca. Artefacts from a farmer near Puno — a pendant and a golden cup — that had sent him south with trucks, dynamite, and a hired crew. Dr. Dreyer noted the pallor, the careful sips of water over alcohol, the slight tremor when Larkin set his glass down too hard. <em>Opium withdrawal.</em> A man burning through his last good days on a final expedition.
+            </p>
+
+            <p>
+              Later, after Larkin and Mendoza had departed into the Lima night, Jesse Hughes dropped the performance. His real name was <strong>Jackson Elias</strong>. He was an author, not an associate, and the pendant and the cup were from different centuries entirely — no chance they came from the same site. Someone had sold Larkin a story, and Mendoza was the most likely author of it. He lit his pipe and smiled the smile of a man who finds mysteries more invigorating than alarming.
+            </p>
+
+            <p>
+              They walked back to the Hotel Mori later than intended, Jackson among them. In the lobby, Petronila was mopping the floor with a cigarette in her mouth. She looked up without breaking rhythm.
+            </p>
+
+            <div class="pull-quote">
+              <p>"She has been waiting two hours. By the window."</p>
+            </div>
+
+            <p>
+              The woman in the chair was perhaps thirty-five, dressed for travel and movement, sitting with the deliberate stillness of someone in whom stillness requires effort. One hand rested in her lap. The other was pressed against her left side, and the fingers were dark. Dr. Dreyer saw it from across the room — the blood soaked through, the waxen grey at the edges of her face, the sweat at her temples she hadn't bothered to wipe away. Her eyes, however, were entirely alert. She had been waiting, and now she was done waiting.
+            </p>
+
+            <p>
+              She said Jackson's real name. She produced a cloth-wrapped package and held it out with a steady hand. Her name was <strong>Luciana Quispe Mamani</strong>. She had been carrying this for three months, she said, and she was no longer certain whether she had been following it or it had been following her. There was a woman at Lake Titicaca. <strong>Nayra.</strong> Find her before anything else.
+            </p>
+
+            <div class="pull-quote">
+              <p>"Whatever is in that lake — it has been in my dreams since I touched that thing. Every night. It knows I have it."</p>
+            </div>
+
+            <p>
+              She handed over the package, and something left her face — the weight of three months of running. Then she went quietly sideways in the chair, and the doctor was already moving.
+            </p>
+
+            <p>
+              She was alive. She needed a hospital immediately and two hours ago both. The whole strange company of them bundled into the Lima night. Jackson unwrapped the package in the cab. A <strong>golden disc</strong>, ancient and deliberate, heavier than it looked. He held it carefully, the way you hold something that has already caused damage.
+            </p>
+
+            <p>
+              Outside the hospital, Arthur heard it first — the mechanical ratchet of an automatic weapon being readied. He had heard it before. <em>Take cover.</em> The street erupted. A burst of machine gun fire from the shadows, and then chaos — bodies dropping, scrambling, <strong>Jackson going down hard</strong>, Ilya coming up ready with his knife and nothing left to shoot at. The car was already moving, brake lights shrinking away into the city, the shot Arthur fired after it finding nothing but Lima air.
+            </p>
+
+            <p>
+              In the silence that followed, Jackson Elias lay bleeding on the pavement outside a hospital, which was either the worst possible timing or the best.
+            </p>
+
+            <p>
+              The disc was still there. No one had taken it. Monday morning. 8am. Hotel España. The trucks will be waiting.
+            </p>
+          </div>
+
+          <button class="recap-toggle" onclick="event.stopPropagation()">
+            <span>Read Recap</span>
+            <span class="toggle-icon">▲</span>
+          </button>
+        </article>
+
+        <!-- PLACEHOLDER SESSION 2 -->
+        <article class="recap-card fade-in" style="animation-delay:0.5s" onclick="toggleRecap(this)">
+          <div class="recap-header">
+            <div class="recap-number">02</div>
+            <div class="recap-meta">
+              <div class="recap-episode">Episode Two</div>
+              <h2 class="recap-title">Coming Soon</h2>
+              <div class="recap-date">To be continued...</div>
+            </div>
+          </div>
+          <button class="recap-toggle" onclick="event.stopPropagation()">
+            <span>Read Recap</span>
+            <span class="toggle-icon">▼</span>
+          </button>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p class="footer-text">
+      Masks of Nyarlathotep &nbsp;|&nbsp; Peru Chapter &nbsp;|&nbsp;
+      <span>1921</span> &nbsp;|&nbsp;
+      The truth is out there. It is not waiting patiently.
+    </p>
+  </footer>
+
+  <!-- Accessibility bar -->
+  <div class="a11y-bar">
+    <button class="a11y-btn" onclick="toggleReadingMode(this)" title="Larger text and wider spacing">Aa  Reading Mode</button>
+    <button class="a11y-btn" onclick="toggleContrast(this)" title="Maximum contrast">◑  High Contrast</button>
+  </div>
+
+  <script>
+    // Toggle recap open/closed
+    function toggleRecap(card) {
+      card.classList.toggle('open');
+      const icon = card.querySelector('.toggle-icon');
+      icon.textContent = card.classList.contains('open') ? '▲' : '▼';
+      const btnText = card.querySelector('.recap-toggle span:first-child');
+      btnText.textContent = card.classList.contains('open') ? 'Close Recap' : 'Read Recap';
+    }
+
+    // Reading mode — larger text, wider spacing
+    function toggleReadingMode(btn) {
+      document.body.classList.toggle('reading-mode');
+      btn.classList.toggle('active');
+      btn.textContent = document.body.classList.contains('reading-mode')
+        ? 'Aa  Standard Mode'
+        : 'Aa  Reading Mode';
+    }
+
+    // High contrast
+    function toggleContrast(btn) {
+      document.body.classList.toggle('high-contrast');
+      btn.classList.toggle('active');
+    }
+
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          e.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
